@@ -1,0 +1,38 @@
+name: Python application
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Removida a matriz antiga, testando apenas na versão correta do projeto
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar o Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Instalar o Poetry
+        # Instala a versão mais recente e suportada (2.0+) via pip
+        run: pip install poetry
+
+      - name: Instalar dependências
+        # O Poetry vai ler o pyproject.toml e instalar o Django, DRF e o Pytest
+        run: poetry install
+
+      - name: Rodar os testes
+        # Substituímos o manage.py pelo pytest nativo
+        # Passamos variáveis de ambiente básicas caso o settings.py exija durante o teste
+        env:
+          SECRET_KEY: "chave-de-teste-github-actions"
+          DEBUG: 1
+          DJANGO_ALLOWED_HOSTS: "localhost"
+        run: poetry run pytest
