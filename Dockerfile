@@ -30,7 +30,8 @@ WORKDIR $PYSETUP_PATH
 COPY poetry.lock pyproject.toml ./
 
 # O --no-root garante que ele baixe as libs (Django, DRF, etc) sem tentar instalar o seu app "bookstore" ainda
-RUN poetry install --without dev --no-root
+# Removemos o --without dev para ele instalar o pytest também
+RUN poetry install --no-root
 
 WORKDIR /app
 
